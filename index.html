@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillCraft Task 4 - Web Scraper</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 40px;
+      background: #f4f4f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    h2 {
+      margin-top: 30px;
+      color: #16a085;
+    }
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .code-section {
+      margin-top: 20px;
+    }
+    pre {
+      border-radius: 10px;
+      padding: 20px;
+      background: #2d2d2d;
+      overflow-x: auto;
+    }
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #888;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #16a085;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SkillCraft - Task 4 Web Scraper</h1>
+  <p>
+    This task extracts product information (name, price, rating) from an e-commerce website
+    and saves the data into a structured CSV file using Python.
+  </p>
+
+  <h2>📌 Python Code</h2>
+  <div class="code-section">
+    <pre><code class="language-python">
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+url = "https://www.flipkart.com/search?q=earphones"
+response = requests.get(url)
+soup = BeautifulSoup(response.text, "html.parser")
+
+products = []
+for item in soup.select("div._2kHMtA"):
+    name = item.select_one("div._4rR01T")
+    price = item.select_one("div._30jeq3")
+    rating = item.select_one("div._3LWZlK")
+
+    products.append([
+        name.text if name else "N/A",
+        price.text if price else "N/A",
+        rating.text if rating else "N/A"
+    ])
+
+with open("products.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["Product Name", "Price", "Rating"])
+    writer.writerows(products)
+
+print("Data saved to products.csv")
+    </code></pre>
+  </div>
+
+  <h2>📊 Sample Output</h2>
+  <table>
+    <tr>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Rating</th>
+    </tr>
+    <tr>
+      <td>boAt Rockerz 450</td>
+      <td>₹1,499</td>
+      <td>4.3⭐</td>
+    </tr>
+    <tr>
+      <td>realme Buds Q2</td>
+      <td>₹1,799</td>
+      <td>4.1⭐</td>
+    </tr>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
